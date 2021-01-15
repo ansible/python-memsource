@@ -5,10 +5,9 @@ Python Memsource bindings
 ## Usage
 
 ```python
-from memsource import MemsourceClient
+from memsource import Memsource
 
-_memsource = MemsourceClient(username, password)
+_memsource = Memsource(username, password)
 
-_memsource.list_templates()
-
+templates = _memsource.get_templates()
 ```
