@@ -16,7 +16,7 @@ class Memsource:
         self.auth = auth.Auth(username, password)
 
     def handle_rest_call(self, url, method="GET", data=None, headers=None, params=None, files=None, payload=None):
-        """Handle HTTT Rest calls to the API"""
+        """Handle HTTP Rest calls to the API"""
 
         if not headers:
             headers = {
