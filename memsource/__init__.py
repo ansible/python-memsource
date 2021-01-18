@@ -2,6 +2,7 @@
 
 """."""
 
+import json
 import requests
 
 from memsource import auth
@@ -136,10 +137,12 @@ class Memsource:
             'file': open(filename, 'rb')
         }
 
+        kwargs.update({'targetLangs': langs})
+
         headers = {
             'Content-type': 'application/octet-stream',
             'Content-Disposition': 'filename=' + filename,
-            'Memsource': '{"targetLangs": ' + str(langs) + '}'
+            'Memsource': json.dumps(kwargs),
         }
 
         try:
