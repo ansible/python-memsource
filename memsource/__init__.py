@@ -85,6 +85,16 @@ class Memsource:
         except Exception as exc:
             raise exc
 
+    def get_project_by_id(self, project_id):
+        """Retrieve memsource project by its id"""
+
+        url = "%s/projects/%s" % (MEMSOURCE_ENDPOINT_V1_URL, project_id)
+
+        try:
+            return self.handle_rest_call(url, "GET").json()
+        except Exception as exc:
+            raise exc
+
     def get_jobs(self, project_id, filters=None):
         """List all Memsource jobs attached to a project"""
 
