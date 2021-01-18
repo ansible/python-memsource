@@ -106,6 +106,16 @@ class Memsource:
         except Exception as exc:
             raise exc
 
+    def get_job_by_id(self, job_id, project_id):
+        """Retrive a Memsource job by its id"""
+
+        url = "%s/projects/%s/jobs/%s" % (MEMSOURCE_ENDPOINT_V1_URL, project_id, job_id)
+
+        try:
+            return self.handle_rest_call(url, "GET").json()
+        except Exception as exc:
+            raise exc
+
     def create_project_from_template(self, name, template_id, **kwargs):
         """Create a Memsource project from an existing template."""
 
