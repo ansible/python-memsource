@@ -16,7 +16,7 @@ class Memsource:
     def __init__(self, username, password):
         self.auth = auth.Auth(username, password)
 
-    def handle_rest_call(self, url, method="GET", data=None, headers=None, params=None, files=None, payload=None):
+    def handle_rest_call(self, url, method="GET", data=None, headers=None, files=None, payload=None):
         """Handle HTTP Rest calls to the API"""
 
         if not headers:
@@ -30,6 +30,8 @@ class Memsource:
             result = requests.get(url, headers=headers, params=payload)
         elif method == "POST":
             result = requests.post(url, headers=headers, json=data, files=files)
+        elif method == "DELETE":
+            result = requests.delete(url, headers=headers, json=data, params=payload)
 
         if result.status_code == 400:
             raise exceptions.MemsourceHTTPBadRequestException(result)
@@ -87,12 +89,30 @@ class Memsource:
             raise exc
 
     def get_project_by_id(self, project_id):
-        """Retrieve memsource project by its id"""
+        """Retrieve Memsource project by its id"""
 
         url = "%s/projects/%s" % (MEMSOURCE_ENDPOINT_V1_URL, project_id)
 
         try:
             return self.handle_rest_call(url, "GET").json()
+        except Exception as exc:
+            raise exc
+
+    def delete_project(self, project_id, purge=None, do_not_fail_on_404=False):
+        """Delete a Memsource project by its id"""
+
+        url = "%s/projects/%s" % (MEMSOURCE_ENDPOINT_V1_URL, project_id)
+
+        query_param = {'purge': purge} if purge is not None else None
+
+        try:
+            return self.handle_rest_call(url, "DELETE", payload=query_param)
+        except exceptions.MemsourceHTTPNotFoundException as exc:
+            if do_not_fail_on_404:
+                resp = requests.models.Response()
+                resp.status_code = 404
+                return resp
+            raise exc
         except Exception as exc:
             raise exc
 
@@ -108,12 +128,40 @@ class Memsource:
             raise exc
 
     def get_job_by_id(self, job_id, project_id):
-        """Retrive a Memsource job by its id"""
+        """Retrieve a Memsource job by its id"""
 
         url = "%s/projects/%s/jobs/%s" % (MEMSOURCE_ENDPOINT_V1_URL, project_id, job_id)
 
         try:
             return self.handle_rest_call(url, "GET").json()
+        except Exception as exc:
+            raise exc
+
+    def delete_job(self, job_id, project_id, purge=None):
+        """Delete a Memsource job by its id"""
+
+        return self.delete_jobs([job_id], project_id, purge)
+
+    def delete_jobs(self, job_ids, project_id, purge=None, do_not_fail_on_404=False):
+        """Delete a Memsource job by its id"""
+
+        url = "%s/projects/%s/jobs/batch" % (MEMSOURCE_ENDPOINT_V1_URL, project_id)
+
+        query_param = {'purge': purge} if purge is not None else None
+
+        if not isinstance(job_ids, list):
+            job_ids = list(job_ids)
+
+        kwargs = {'jobs': [{'uid': job} for job in job_ids]}
+
+        try:
+            return self.handle_rest_call(url, "DELETE", payload=query_param, data=kwargs)
+        except exceptions.MemsourceHTTPNotFoundException as exc:
+            if do_not_fail_on_404:
+                resp = requests.models.Response()
+                resp.status_code = 404
+                return resp
+            raise exc
         except Exception as exc:
             raise exc
 
