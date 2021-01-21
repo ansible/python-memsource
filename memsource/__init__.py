@@ -3,6 +3,7 @@
 """."""
 
 import json
+import os.path
 import requests
 
 from memsource import auth
@@ -137,6 +138,16 @@ class Memsource:
         except Exception as exc:
             raise exc
 
+    def get_job_targetfile(self, job_id, project_id):
+        """Download job target file."""
+
+        url = "%s/projects/%s/jobs/%s/targetFile" % (MEMSOURCE_ENDPOINT_V1_URL, project_id, job_id)
+
+        try:
+            return self.handle_rest_call(url, "GET")
+        except Exception as exc:
+            raise exc
+
     def delete_job(self, job_id, project_id, purge=None):
         """Delete a Memsource job by its id"""
 
@@ -176,20 +187,26 @@ class Memsource:
         except Exception as exc:
             raise exc
 
-    def create_job(self, project_id, langs, filename, **kwargs):
+    def create_job(self, project_id, langs, filename, split_filename=None, **kwargs):
         """Create a Memsource job for a given project and lang"""
 
         url = "%s/projects/%s/jobs" % (MEMSOURCE_ENDPOINT_V1_URL, project_id)
+
+        kwargs.update({'targetLangs': langs})
 
         files = {
             'file': open(filename, 'rb')
         }
 
-        kwargs.update({'targetLangs': langs})
+        if split_filename:
+            kwargs.update({'path': os.path.dirname(filename)})
+            _filename = os.path.basename(filename)
+        else:
+            _filename = filename
 
         headers = {
             'Content-type': 'application/octet-stream',
-            'Content-Disposition': 'filename=' + filename,
+            'Content-Disposition': 'filename=' + _filename,
             'Memsource': json.dumps(kwargs),
         }
 
