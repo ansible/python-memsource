@@ -1,6 +1,9 @@
 # python-memsource
 
-Python Memsource bindings
+Python Memsource API bindings
+
+This project is still under active construction.
+This README.md will be updated as progress are made.
 
 ## Usage
 
