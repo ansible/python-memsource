@@ -65,7 +65,7 @@ class Memsource:
     # Endpoint: importSettings
     #
     def get_import_settings(self, filters=None):
-        """List all Memsource importSettings"""
+        """List all Memsource import settings configuration"""
 
         url = "%s/importSettings" % MEMSOURCE_ENDPOINT_V1_URL
 
@@ -75,6 +75,48 @@ class Memsource:
             return import_settings if not filters else [item for item in import_settings if filters.items() <= item.items()]
         except Exception as exc:
             raise exc
+
+    def get_import_settings_by_id(self, import_setting_id):
+        """List a Memsource import settings configuration by its id"""
+
+        url = "%s/importSettings/%s" % (MEMSOURCE_ENDPOINT_V1_URL, import_setting_id)
+
+        try:
+            return self.handle_rest_call(url, "GET").json()
+        except Exception as exc:
+            raise exc
+
+    def create_import_settings(self, name, file_import_settings):
+        """Create an import settings configuration"""
+
+        url = "%s/importSettings" % MEMSOURCE_ENDPOINT_V1_URL
+
+        kwargs = {
+            "name": name,
+            "fileImportSettings": file_import_settings
+        }
+
+        try:
+            return self.handle_rest_call(url, "POST", data=kwargs).json()
+        except Exception as exc:
+            raise exc
+
+    def delete_import_settings(self, import_setting_id, do_not_fail_on_404=False):
+        """Delete a Memsource import setting configuration by its id"""
+
+        url = "%s/importSettings/%s" % (MEMSOURCE_ENDPOINT_V1_URL, import_setting_id)
+
+        try:
+            return self.handle_rest_call(url, "DELETE")
+        except exceptions.MemsourceHTTPNotFoundException as exc:
+            if do_not_fail_on_404:
+                resp = requests.models.Response()
+                resp.status_code = 404
+                return resp
+            raise exc
+        except Exception as exc:
+            raise exc
+
 
     # Endpoint: projects
     #
