@@ -129,11 +129,11 @@ class Memsource:
             projects = self.handle_rest_call(url, "GET").json()["content"]
             total_pages = self.handle_rest_call(url, "GET").json()["totalPages"]
             i = 1
-            while i <= total_pages:
-                i += 1
+            while i <= total_pages:                
                 next_page_url = f"{MEMSOURCE_ENDPOINT_V1_URL}/projects/?pageNumber={i}"
                 next_page_projects = self.handle_rest_call(next_page_url, "GET").json()["content"]
                 projects.extend(next_page_projects)
+                i += 1
             return projects if not filters else [item for item in projects if filters.items() <= item.items()]
         except Exception as exc:
             raise exc
