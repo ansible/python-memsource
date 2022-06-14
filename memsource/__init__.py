@@ -30,7 +30,7 @@ class Memsource:
         if method == "GET":
             result = requests.get(url, headers=headers, params=payload)
         elif method == "POST":
-            result = requests.post(url, headers=headers, data=files)
+            result = requests.post(url, headers=headers, json=data, files=files)
         elif method == "DELETE":
             result = requests.delete(url, headers=headers, json=data, params=payload)
 
@@ -265,8 +265,10 @@ class Memsource:
             'Memsource': json.dumps(kwargs),
         }
 
+        headers.update({"Authorization": "ApiToken %s" % self.auth.token})
+
         try:
-            return self.handle_rest_call(url, "POST", files=files, headers=headers).json()
+            return requests.post(url, headers=headers, data=files).json() # Bug fix to push json files
         except Exception as exc:
             raise exc
 
