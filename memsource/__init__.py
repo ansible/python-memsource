@@ -30,7 +30,7 @@ class Memsource:
         if method == "GET":
             result = requests.get(url, headers=headers, params=payload)
         elif method == "POST":
-            result = requests.post(url, headers=headers, json=data, files=files)
+            result = requests.post(url, headers=headers, data=files)
         elif method == "DELETE":
             result = requests.delete(url, headers=headers, json=data, params=payload)
 
@@ -250,9 +250,8 @@ class Memsource:
 
         kwargs.update({'targetLangs': langs})
 
-        files = {
-            'file': open(filename, 'rb')
-        }
+        with open(filename, 'rb') as f:
+            files = f.read()
 
         if split_filename:
             kwargs.update({'path': os.path.dirname(filename)})
@@ -261,13 +260,12 @@ class Memsource:
             _filename = filename
 
         headers = {
-            'Content-type': 'application/octet-stream',
             'Content-Disposition': 'filename=' + _filename,
             'Memsource': json.dumps(kwargs),
         }
 
         try:
-            return self.handle_rest_call(url, "POST", data=kwargs, headers=headers, files=files).json()
+            return self.handle_rest_call(url, "POST", files=files, headers=headers).json()
         except Exception as exc:
             raise exc
 
