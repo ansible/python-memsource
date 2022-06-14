@@ -243,12 +243,13 @@ class Memsource:
         except Exception as exc:
             raise exc
 
-    def create_job(self, project_id, langs, filename, split_filename=None, **kwargs):
+    def create_job(self, project_id, langs, filename, split_filename=None, preTranslate=True, **kwargs):
         """Create a Memsource job for a given project and lang"""
 
         url = "%s/projects/%s/jobs" % (MEMSOURCE_ENDPOINT_V1_URL, project_id)
 
         kwargs.update({'targetLangs': langs})
+        kwargs.update({'preTranslate': preTranslate})
 
         with open(filename, 'rb') as f:
             files = f.read()
