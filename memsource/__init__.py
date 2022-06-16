@@ -263,8 +263,10 @@ class Memsource:
 
         url = "%s/projects/%s/jobs" % (MEMSOURCE_ENDPOINT_V1_URL, project_id)
 
-        kwargs.update({'targetLangs': langs})
-        kwargs.update({'preTranslate': preTranslate})
+        kwargs.update({
+                    'targetLangs': langs,
+                    'preTranslate': preTranslate
+        })
 
         with open(filename, 'rb') as f:
             files = f.read()
