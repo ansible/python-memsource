@@ -30,7 +30,7 @@ class Memsource:
         if method == "GET":
             result = requests.get(url, headers=headers, params=payload)
         elif method == "POST":
-            result = requests.post(url, headers=headers, json=data, files=files)
+            result = requests.post(url, headers=headers, json=data, data=files)
         elif method == "DELETE":
             result = requests.delete(url, headers=headers, json=data, params=payload)
 
@@ -50,7 +50,12 @@ class Memsource:
     # Endpoint: projectTemplates
     #
     def get_templates(self, filters=None):
-        """List all Memsource templates"""
+        """
+        List all Memsource templates
+        Each paginated response is binded
+        to a list and returned
+        Return type: list
+        """
 
         url = "%s/projectTemplates" % MEMSOURCE_ENDPOINT_V1_URL
 
@@ -128,7 +133,12 @@ class Memsource:
     # Endpoint: projects
     #
     def get_projects(self, filters=None):
-        """List all Memsource projects"""
+        """
+        List all Memsource projects
+        Each paginated response is binded
+        to a list and returned
+        Return type: list
+        """
 
         url = "%s/projects" % MEMSOURCE_ENDPOINT_V1_URL
 
@@ -244,7 +254,12 @@ class Memsource:
             raise exc
 
     def create_job(self, project_id, langs, filename, split_filename=None, preTranslate=True, **kwargs):
-        """Create a Memsource job for a given project and lang"""
+        """
+        Create a Memsource job for a given project and lang.
+        Function runs a post request with no 
+        Content-type header to post binary files to the 
+        server.
+        """
 
         url = "%s/projects/%s/jobs" % (MEMSOURCE_ENDPOINT_V1_URL, project_id)
 
@@ -265,10 +280,8 @@ class Memsource:
             'Memsource': json.dumps(kwargs),
         }
 
-        headers.update({"Authorization": "ApiToken %s" % self.auth.token})
-
         try:
-            return requests.post(url, headers=headers, data=files).json() # Bug fix to push json files
+            return self.handle_rest_call(url, "POST", headers=headers, files=files).json()
         except Exception as exc:
             raise exc
 
