@@ -165,6 +165,16 @@ class Memsource:
         except Exception as exc:
             raise exc
 
+    def get_project_by_name(self, project_name):
+        """Retrieve Memsource project by project name"""
+
+        url = "%s/projects/?name=%s" % (MEMSOURCE_ENDPOINT_V1_URL, project_name)
+
+        try:
+            return self.handle_rest_call(url, "GET").json()
+        except Exception as exc:
+            raise exc
+
     def delete_project(self, project_id, purge=None, do_not_fail_on_404=False):
         """Delete a Memsource project by its id"""
 
