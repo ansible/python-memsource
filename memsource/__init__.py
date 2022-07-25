@@ -200,7 +200,7 @@ class Memsource:
 
         try:
             jobs = self.handle_rest_call(url, "GET").json()["content"]
-            return jobs if not filters else [item for item in jobs if filters.items() <= item.items()]
+            return jobs if not filters else [job for job in jobs if job['targetLang'] in filters["target_langs"]]
         except Exception as exc:
             raise exc
 
