@@ -200,6 +200,13 @@ class Memsource:
 
         try:
             jobs = self.handle_rest_call(url, "GET").json()["content"]
+            total_pages = self.handle_rest_call(url, "GET").json()["totalPages"]
+            i = 1
+            while i <= total_pages:
+                next_page_url = f"{url}/?pageNumber={i}"
+                next_page_jobs = self.handle_rest_call(next_page_url, "GET").json()["content"]
+                jobs.extend(next_page_jobs)
+                i += 1
             return jobs if not filters else [item for item in jobs if filters.items() <= item.items()]
         except Exception as exc:
             raise exc
