@@ -63,7 +63,7 @@ class Memsource:
             templates = self.handle_rest_call(url, "GET").json()["content"]
             total_pages = self.handle_rest_call(url, "GET").json()["totalPages"]
             i = 1
-            while i <= total_pages:                
+            while i <= total_pages:
                 next_page_url = f"{MEMSOURCE_ENDPOINT_V1_URL}/projects/?pageNumber={i}"
                 next_page_templates = self.handle_rest_call(next_page_url, "GET").json()["content"]
                 templates.extend(next_page_templates)
@@ -146,7 +146,7 @@ class Memsource:
             projects = self.handle_rest_call(url, "GET").json()["content"]
             total_pages = self.handle_rest_call(url, "GET").json()["totalPages"]
             i = 1
-            while i <= total_pages:                
+            while i <= total_pages:
                 next_page_url = f"{MEMSOURCE_ENDPOINT_V1_URL}/projects/?pageNumber={i}"
                 next_page_projects = self.handle_rest_call(next_page_url, "GET").json()["content"]
                 projects.extend(next_page_projects)
